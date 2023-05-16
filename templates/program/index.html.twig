@@ -1,19 +1,21 @@
-<!doctype html>
+{% extends 'base.html.twig' %}
 
-<html lang="en">
+{% block stylesheets %}
 
-<head>
+	{{ encore_entry_link_tags('app') }}
 
-   <meta charset="UTF-8">
+{% endblock %}
+{% block title %}Wild Series
+{% endblock %}
 
-   <title>Wild Series</title>
+{% block javascripts %}
 
-</head>
+	{{ encore_entry_script_tags('app') }}
 
-<body>
+{% endblock %}
+{% block body %}
 
-   <h1>{{ website }} index</h1>
+	<h1>{{ title }}
+		index</h1>
 
-</body>
-
-</html>
+{% endblock %}
