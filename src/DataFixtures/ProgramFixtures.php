@@ -22,7 +22,6 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
         foreach (self::PROGRAM as $key => $programTitle) {
 
             $program = new Program();
-
             $program->setTitle($programTitle);
 
             $program->setSynopsis('');

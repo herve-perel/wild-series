@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+
+	{{ encore_entry_link_tags('app') }}
+
+{% endblock %}
+{% block title %}Wild Series
+{% endblock %}
+
+{% block javascripts %}
+
+	{{ encore_entry_script_tags('app') }}
+
+{% endblock %}
+{% block body %}
+	{% for category in categorys %}
+
+		<ul>
+		<li>{{ category.name }}</li>
+			<li><a href="{{ path('category_show', {categoryName:category.name }) }}">Voir les series</a></li>
+		</ul>
+	{% endfor %}
+{% endblock %}
