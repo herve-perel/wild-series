@@ -30,15 +30,6 @@ class CategoryRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Category $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
 //    /**
 //     * @return Category[] Returns an array of Category objects
 //     */

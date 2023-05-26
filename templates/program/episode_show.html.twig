@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}All programs
+{% endblock %}
+
+
+{% block body %}
+
+	<div class="media">
+		<div>
+
+			<h2>{{ episode.id }}
+				- Catégorie :
+				{{ episode.season.id }}</h2>
+
+			<p>{{ episode.title}}</p>
+			<p>{{ episode.number }}</p>
+			<p>{{ episode.synopsis }}</p>
+
+
+		</div>
+	</div>
+
+{% endblock %}{% endblock %}
