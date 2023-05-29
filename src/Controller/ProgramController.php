@@ -13,17 +13,26 @@ use App\Repository\SeasonRepository;
 use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
 {
     #[Route('/', name: 'index')]
-    public function index(ProgramRepository $programRepository, SeasonRepository $seasonRepository): Response
+    public function index(ProgramRepository $programRepository, SeasonRepository $seasonRepository, RequestStack $requestStack): Response
     {
+        $session = $requestStack->getSession();
+        $session = $requestStack->getSession();
+        if (!$session->has('total')) {
+            $session->set('total', 0); // if total doesn’t exist in session, it is initialized.
+        }
+        $total = $session->get('total');
+
         $programs = $programRepository->findAll();
         $seasons = $seasonRepository->findAll();
 
@@ -45,9 +54,11 @@ class ProgramController extends AbstractController
 
         if ($form->isSubmitted()) {
             $programRepository->save($program, true);
+            $this->addFlash('success', 'The new program has been created');
             return $this->redirectToRoute('program_index');
         }
         return $this->render('program/new.html.twig', [
+            'program' => $program,
             'form' => $form,
         ]);
     }

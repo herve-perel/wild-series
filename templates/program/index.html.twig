@@ -19,6 +19,7 @@
 				{{ program.category.name }}</h2>
 
 			<p>{{ program.synopsis }}</p>
+			<p>{{ app.session.get('total') }}</p>
 			<a href="{{ path("program_show", { "id": program.id})}}">Voir la fiche de la serie</a>
 		</div>
 	{% else %}
