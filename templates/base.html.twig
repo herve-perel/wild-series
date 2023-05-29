@@ -23,6 +23,13 @@
 		{% endblock %}
 	</header>
 	<body>
-		{% block body %}{% endblock %}
+		{% block body %}
+		
+			{% for message in messages %}
+				<div class="alert alert-{{ category }}">
+					{{ message }}
+				</div>
+			{% endfor %}
+		{% endblock %}
 	</body>
 </html>
