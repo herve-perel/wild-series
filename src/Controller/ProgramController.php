@@ -2,12 +2,21 @@
 
 namespace App\Controller;
 
+
+
+use App\Entity\Season;
+use App\Entity\Episode;
+use App\Entity\Program;
+use App\Form\ProgramType;
+use Doctrine\ORM\Mapping\Entity;
+use App\Repository\SeasonRepository;
 use App\Repository\EpisodeRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\ProgramRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\ProgramRepository;
-use App\Repository\SeasonRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
@@ -17,53 +26,56 @@ class ProgramController extends AbstractController
     {
         $programs = $programRepository->findAll();
         $seasons = $seasonRepository->findAll();
-       
+
         return $this->render(
             'program/index.html.twig',
-            ['programs' => $programs,
-            'seasons' => $seasons,
-          
+            [
+                'programs' => $programs,
+                'seasons' => $seasons,
             ]
         );
     }
 
-    #[Route('/{id}', methods: ['GET'], requirements: ['page' => '\d+'], name: 'show')]
-    public function show(int $id, ProgramRepository $programRepository): Response
+    #[Route('/new', name: 'new')]
+    public function new(Request $request, ProgramRepository $programRepository): Response
     {
-        $program = $programRepository->findOneBy(['id' => $id]);
-        // same as $program = $programRepository->find($id);
+        $program = new Program();
+        $form = $this->createForm(ProgramType::class, $program);
+        $form->handleRequest($request);
 
-        if (!$program) {
-            throw $this->createNotFoundException(
-                'No program with id : ' . $id . ' found in program\'s table.'
-            );
+        if ($form->isSubmitted()) {
+            $programRepository->save($program, true);
+            return $this->redirectToRoute('program_index');
         }
-        return $this->render('program/show.html.twig', [
-            'program' => $program,
+        return $this->render('program/new.html.twig', [
+            'form' => $form,
         ]);
     }
 
-
-    #[Route('/{programId}/season/{seasonId}', name: 'season_show')]
-    public function showSeason(int $programId, ProgramRepository $programRepository, int $seasonId, SeasonRepository $seasonRepository, EpisodeRepository $episodeRepository): Response
+    #[Route('/{program}/season/{season}', methods: ['GET'], name: 'season_show')]
+    public function showSeason(Program $program, Season $season): Response
     {
-        $program = $programRepository->find($programId);
-        
-        $episodes = $episodeRepository->findAll();
-        if (!$program) {
-            throw $this->createNotFoundException(
-                'No program with id : ' . $programId . ' found in season\'s table.'
-            );
-        }
+        return $this->render('program/season_show.html.twig', [
+            'program' => $program,
+            'season' => $season,
+        ]);
+    }
 
-        $season = $seasonRepository->find($seasonId);
-        if (!$season) {
-            throw $this->createNotFoundException(
-                'No season with id : ' . $seasonId . ' found in program\'s table.'
-            );
-        }
-        
+    #[Route('/{id}', name: 'show')]
+    public function show(Program $program): Response
+    {
+        return $this->render('program/show.html.twig', ['program' => $program]);
+    }
 
-        return $this->render('program/season_show.html.twig', ['program' => $program, 'season' => $season,'episodes' => $episodes ]);
+    #[Route('/{program}/season/{season}/episode/{episode}', methods: ['GET'], name: 'episode_show')]
+
+
+    public function showEpisode(Program $program, Season $season, Episode $episode): Response
+    {
+        return $this->render('program/episode_show.html.twig', [
+            'program' => $program,
+            'season' => $season,
+            'episode' => $episode,
+        ]);
     }
 }

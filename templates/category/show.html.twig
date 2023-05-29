@@ -11,14 +11,14 @@
 	 <div class="media">
 		<img class="align-self-start mr-3" src="{{program.poster}}" alt="{{ program.title }} poster">
 		<div class="media-body">
-			<h1 class="mt-0">{{ program.title }}</h1>
+			<h1>{{ program.title }}</h1>
 			<p>{{ program.synopsis }}</p>
 			<p>Catégorie :
 				{{ program.category.name }}</p>
 		</div>
 	</div>
 	{% endfor %}
-	<a href="{{ path('category_index') }}">
-		Retour à la liste des categories
+	<a href="{{ path('program_index') }}">
+		Voir à la liste des serie
 	</a>
 {% endblock %}

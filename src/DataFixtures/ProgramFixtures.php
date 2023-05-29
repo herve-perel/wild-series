@@ -34,7 +34,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
 
             //Ce Faker va nous permettre d'alimenter l'instance de Season que l'on souhaite ajouter en base
 
-            $program->setTitle($faker->numberBetween(1, 10));
+            $program->setTitle($faker->text(5));
 
             $program->setYear($faker->year());
 
@@ -42,7 +42,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
 
             $program->setCountry($faker->numberBetween(1, 10));
             $program->setPoster($faker->numberBetween(1, 10));
-            $program->setCategory($this->getReference('category_' . $faker->numberBetween(0, 4)));
+            $program->setCategory($this->getReference('category_' . $i));
             $this->addReference('program_' . $i, $program);
 
             $manager->persist($program);
