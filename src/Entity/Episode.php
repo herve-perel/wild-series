@@ -14,8 +14,7 @@ class Episode
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'episodes')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Season::class ,inversedBy: 'episodes')]
     private ?season $season = null;
 
     #[ORM\Column(length: 255, nullable: true)]
