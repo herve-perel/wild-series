@@ -19,12 +19,6 @@
 				{{ program.category.name }}</h2>
 
 			<p>{{ program.synopsis }}</p>
-			
-			{% for category, messages in app.flashes %}
-
-				
-
-			{% endfor %}
 			<a href="{{ path("program_show", { "id": program.id})}}">Voir la fiche de la serie</a>
 		</div>
 	{% else %}

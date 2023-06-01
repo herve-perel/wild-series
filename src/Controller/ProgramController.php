@@ -8,9 +8,7 @@ use App\Entity\Season;
 use App\Entity\Episode;
 use App\Entity\Program;
 use App\Form\ProgramType;
-use Doctrine\ORM\Mapping\Entity;
 use App\Repository\SeasonRepository;
-use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -27,9 +25,9 @@ class ProgramController extends AbstractController
     public function index(ProgramRepository $programRepository, SeasonRepository $seasonRepository, RequestStack $requestStack): Response
     {
         $session = $requestStack->getSession();
-        $session = $requestStack->getSession();
+        
         if (!$session->has('total')) {
-            $session->set('total', 0); // if total doesn’t exist in session, it is initialized.
+            $session->set('total', 0);
         }
         $total = $session->get('total');
 
