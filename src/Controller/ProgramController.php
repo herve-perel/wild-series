@@ -10,22 +10,31 @@ use App\Entity\Program;
 use App\Form\ProgramType;
 use App\Repository\SeasonRepository;
 use App\Repository\ProgramRepository;
+use App\Service\ProgramDuration;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
+
 
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
 {
+
+    public function __construct(
+        private SluggerInterface $slugger,
+    ) {
+    }
     #[Route('/', name: 'index')]
     public function index(ProgramRepository $programRepository, SeasonRepository $seasonRepository, RequestStack $requestStack): Response
     {
         $session = $requestStack->getSession();
-        
+
         if (!$session->has('total')) {
             $session->set('total', 0);
         }
@@ -44,14 +53,24 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/new', name: 'new')]
-    public function new(Request $request, ProgramRepository $programRepository): Response
+    public function new(Request $request, MailerInterface $mailer, ProgramRepository $programRepository, SluggerInterface $slugger): Response
     {
         $program = new Program();
         $form = $this->createForm(ProgramType::class, $program);
         $form->handleRequest($request);
-
-        if ($form->isSubmitted()) {
+       
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            $program->setSlug($this->slugger->slug($program->getTitle()));
             $programRepository->save($program, true);
+            $email = (new Email())
+                ->from($this->getParameter('mailer_from'))
+                ->to('your_email@example.com')
+                ->subject('Une nouvelle série vient d\'être publiée !')
+                ->html($this->renderView('program/newProgramEmail.html.twig', ['program' => $program]));
+                $this->getParameter('mailer_from');
+
+            $mailer->send($email);
             $this->addFlash('success', 'The new program has been created');
             return $this->redirectToRoute('program_index');
         }
@@ -61,7 +80,7 @@ class ProgramController extends AbstractController
         ]);
     }
 
-    #[Route('/{program}/season/{season}', methods: ['GET'], name: 'season_show')]
+    #[Route('/{slug}/season/{season}', methods: ['GET'], name: 'season_show')]
     public function showSeason(Program $program, Season $season): Response
     {
         return $this->render('program/season_show.html.twig', [
@@ -70,13 +89,16 @@ class ProgramController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'show')]
-    public function show(Program $program): Response
+    #[Route('/{slug}', name: 'show')]
+    public function show(Program $program, ProgramDuration $programDuration): Response
     {
-        return $this->render('program/show.html.twig', ['program' => $program]);
+        return $this->render('program/show.html.twig', [
+            'program' => $program,
+            'programDuration' => $programDuration->calculate($program)
+        ]);
     }
 
-    #[Route('/{program}/season/{season}/episode/{episode}', methods: ['GET'], name: 'episode_show')]
+    #[Route('/{programSlug}/season/{season}/episode/{episodeSlug}', methods: ['GET'], name: 'episode_show')]
 
 
     public function showEpisode(Program $program, Season $season, Episode $episode): Response

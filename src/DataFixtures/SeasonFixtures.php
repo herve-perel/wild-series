@@ -4,15 +4,22 @@
 namespace App\DataFixtures;
 
 
-use App\Entity\Season;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Faker\Factory;
+use App\Entity\Season;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class SeasonFixtures extends Fixture implements DependentFixtureInterface
 
 {
+    protected $slugger;
+
+    public function __construct(SluggerInterface $slugger)
+    {
+        $this->slugger = $slugger;
+    }
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
@@ -24,7 +31,6 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface
             $season->setDescription($faker->paragraphs(3, true));
             $season->setProgram($this->getReference('program_' . $i % 5));
             $this->addReference('season_' . $i, $season);
-
             $manager->persist($season);
         }
         $manager->flush();

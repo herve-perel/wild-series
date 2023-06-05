@@ -8,10 +8,13 @@ use App\Repository\SeasonRepository;
 use App\Repository\EpisodeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
-#[Route('/season',  name: 'app_season_')]
+#[Route('/season',  name: 'season_')]
 class SeasonController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
@@ -24,16 +27,24 @@ class SeasonController extends AbstractController
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SeasonRepository $seasonRepository): Response
+    public function new(Request $request, SeasonRepository $seasonRepository, MailerInterface $mailer): Response
     {
         $season = new Season();
         $form = $this->createForm(SeasonType::class, $season);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
             $seasonRepository->save($season, true);
+            $email = (new Email())
+            ->from($this->getParameter('mailer_from'))
+            ->to('your_email@example.com')
+            ->subject('Une nouvelle saison vient d\'être publiée !')
+            ->html($this->renderView('season/newSeasonEmail.html.twig', ['season' => $season]));
+            $this->getParameter('mailer_from');
 
-            return $this->redirectToRoute('index', [], Response::HTTP_SEE_OTHER);
+        $mailer->send($email);
+            return $this->redirectToRoute('season_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('season/new.html.twig', [

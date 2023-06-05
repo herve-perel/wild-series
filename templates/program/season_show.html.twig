@@ -9,7 +9,7 @@
 		<div>
 			<h2>{{episode.number}}-{{episode.title}}</h2>
 			<p>{{episode.synopsis}}</p>
-			<a href="{{path('program_episode_show',{'program':program.id,'season':season.id, 'episode':episode.id})}}">En savoir plus</a>
+			<a href="{{path('program_episode_show',{'programSlug':program.slug,'season':season.id, 'episodeSlug':episode.slug})}}">En savoir plus</a>
 		</div>
 	{% endfor %}
 </div>
