@@ -5,10 +5,11 @@
 {% endblock %}
 
 {% block body %}
+<img class="align-self-start mr-3" src="{{ vich_uploader_asset(actor) }}" alt="{{ actor.name }} poster">
 	{{ actor.name }}
 	{% for program in actor.programs %}
 		<div class="media">
-			<img class="align-self-start mr-3" src="{{program.poster}}" alt="{{ program.title }} poster">
+			
 			<div class="media-body">
 				<h1 class="mt-0">{{ program.id }}/{{ program.title }}</h1>
 				<p>{{ program.synopsis }}</p>

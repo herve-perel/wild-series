@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Actor;
 use App\Entity\Program;
+use App\Form\ActorType;
 use App\Repository\ActorRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -23,6 +25,28 @@ class ActorController extends AbstractController
             ['actors' => $actors]
         );
     }
+
+     #[Route('/new', name: 'new')]
+    public function new(Request $request, ActorRepository $actorRepository): Response
+    {
+        $actor = new Actor();
+        $form = $this->createForm(ActorType::class, $actor);
+        $form->handleRequest($request);
+       
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+        
+            $actorRepository->save($actor, true);
+            
+            $this->addFlash('success', 'The new actor has been created');
+            return $this->redirectToRoute('actor_index');
+        }
+        return $this->render('actor/new.html.twig', [
+            'actor' => $actor,
+            'form' => $form,
+        ]);
+    }
+    
     #[Route('/actor/{id}/', name: 'show')]
 
     public function show(Actor $actor): Response
@@ -36,4 +60,6 @@ class ActorController extends AbstractController
     {
         return $this->render('actor/program_show.html.twig', ['actor' => $actor, 'program' => $program]);
     }
+
+   
 }

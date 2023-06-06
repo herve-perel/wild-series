@@ -1,0 +1,16 @@
+vich_uploader:
+    db_driver: orm
+
+
+    metadata:
+        type: attribute
+        
+    mappings:
+        poster_file:
+            uri_prefix: /uploads/images/posters
+            upload_destination: '%upload_directory%'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+        actor_file:
+            uri_prefix: /uploads/images/actor
+            upload_destination: '%upload_directory_actor%'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
