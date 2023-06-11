@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 
+use App\Entity\Comment;
 use App\Entity\Season;
 use App\Entity\Episode;
 use App\Entity\Program;
@@ -19,6 +20,7 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 
 
@@ -62,6 +64,7 @@ class ProgramController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) {
             $program->setSlug($this->slugger->slug($program->getTitle()));
+            $program->setOwner($this->getUser());
             $programRepository->save($program, true);
             $email = (new Email())
                 ->from($this->getParameter('mailer_from'))
@@ -101,12 +104,52 @@ class ProgramController extends AbstractController
     #[Route('/{programSlug}/season/{season}/episode/{episodeSlug}', methods: ['GET'], name: 'episode_show')]
 
 
-    public function showEpisode(Program $program, Season $season, Episode $episode): Response
+    public function showEpisode(Program $program, Season $season, Episode $episode, Comment $comments): Response
     {
         return $this->render('program/episode_show.html.twig', [
             'program' => $program,
             'season' => $season,
             'episode' => $episode,
+            'comments' => $comments,
         ]);
+    }
+
+
+    #[Route('/{slug}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Program $program, ProgramRepository $programRepository, SluggerInterface $slugger): Response
+    {
+        $form = $this->createForm(ProgramType::class, $program);
+        $form->handleRequest($request);
+
+        if ($this->getUser() !== $program->getOwner()) {
+            // If not the owner, throws a 403 Access Denied exception
+            throw $this->createAccessDeniedException('Tu ne peux pas modifier le program d\'un autre utilisateur !');
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $slug = $slugger->slug($program->getTitle());
+            $program->setSlug($slug);
+
+            $programRepository->save($program, true);
+            $this->addFlash('success', 'The season has been edited.');
+
+            return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('program/edit.html.twig', [
+            'program' => $program,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'delete', methods: ['POST'])]
+    public function delete(Request $request, Program $program, ProgramRepository $programRepository): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $program->getId(), $request->request->get('_token'))) {
+            $programRepository->remove($program, true);
+            $this->addFlash('danger', 'The new episode has been deleted');
+        }
+
+        return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
     }
 }

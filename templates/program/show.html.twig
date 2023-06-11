@@ -9,7 +9,8 @@
 	<div class="media">
 		<img class="align-self-start mr-3" src="{{ vich_uploader_asset(program) }}" alt="{{ program.title }}" alt="{{ program.title }} poster">
 		<div class="media-body">
-			<h1 class="mt-0">Serie {{ program.title }}</h1>
+			<h1 class="mt-0">Serie
+				{{ program.title }}</h1>
 			<p>{{ program.synopsis }}</p>
 			<p>Catégorie :
 				{{ program.category.name }}</p>
@@ -25,9 +26,16 @@
 	<strong>Acteurs :</strong>
 	<ul>
 		{% for actor in program.actors %}
-			<li><a href="{{ path('actor_show', {'id': actor.id})}}">{{ actor.name}}</a></li>
+			<li>
+				<a href="{{ path('actor_show', {'id': actor.id})}}">{{ actor.name}}</a>
+			</li>
 		{% else %}
 			<li>Aucun acteur pour cette série</li>
 		{% endfor %}
 	</ul>
+	{% if is_granted("ROLE_ADMIN") %}
+
+		<a href="{{ path('program_edit', { 'slug': program.slug} ) }}">Éditer</a>
+
+	{% endif %}
 {% endblock %}

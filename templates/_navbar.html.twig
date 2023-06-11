@@ -19,6 +19,19 @@
 				<a class="nav-link text-dark" href="#">Login</a>
 			</li>
 		</ul>
+		{% if app.user %}
+
+			{{ app.user.email }}
+
+			<a href="{{ path('app_logout') }}">
+				Se déconnecter</a>
+
+		{% else %}
+
+			<a href="{{ path('app_login') }}">
+				Se connecter</a>
+
+		{% endif %}
 		<form class=" d-flex justify-content-between form-inline my-2 my-lg-0">
 			<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
 			<button class="btn btn-outline-success my-2 my-sm-0 bg-dark text-secondary " type="submit">Search</button>

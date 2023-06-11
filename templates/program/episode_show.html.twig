@@ -1,18 +1,34 @@
 {% extends 'base.html.twig' %}
-
-
-{% block title %}All programs
+{% block title %}
+	{{ parent() }}
+	| Saison
+	{{ season.id }}
 {% endblock %}
-
 
 {% block body %}
 
-	<div class="media">
-		<div>
-			<h1>{{ episode.title}}</h1>
-			<p>{{ episode.number }}</p>
-			<p>{{ episode.synopsis }}</p>
-		</div>
-	</div>
+<h1>{{ program.title }}</h1>
+<h3>{{ episode.title }}</h3>
+<h2>{{ 'Épisode n° ' ~ episode.number }}</h2>
+<p>{{ episode.synopsis }}</p>
+{% if app.user %}
+	<a href="{{ path('app_comment_new', {'episode': episode.id, 'user' : app.user.id }) }}">
 
-{% endblock %}
+		commentaire</a>
+{% endif %}
+{# <a class="btn btn-outline-secondary text-dark fw-bold" href="{{ path('app_program_index') }}">Retour</a> #}
+<a  href="{{ path('program_index') }}">Retour</a>
+{% for comment in episode.comments %}
+	<h5 class="card-title">{{ comment.author.email}}</h5>
+	<p class="card-text max-height-20">{{ comment.comment }}.</p>
+	<span class="badge rounded-pill text-bg-dark">Note :{{ comment.rate }}</span>
+	<div class="card-footer d-flex align-items-center justify-content-end">
+		{% if is_granted("ROLE_ADMIN") or (is_granted("ROLE_CONTRIBUTOR") and app.user == comment.author) %}
+			<a class="text-dark" href="{{ path('app_comment_edit', { 'id': comment.id} ) }}">
+
+				Éditer
+			</a>
+		{% endif %}
+	</div>
+</div></div>{% endfor %}</div></div>{% endblock %}
+

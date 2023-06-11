@@ -70,6 +70,9 @@ class Program
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'programs')]
+    private ?User $owner = null;
+
 
 
 
@@ -238,6 +241,18 @@ class Program
 
             $this->updatedAt = new DateTime('now');
         }
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
+
         return $this;
     }
 }
