@@ -40,7 +40,7 @@ class CommentController extends AbstractController
 
             return $this->redirectToRoute('program_episode_show', [
                 'programSlug' => $episode->getSeason()->getProgram()->getSlug(),
-                'seasonNumber' => $episode->getSeason()->getNumber(),
+                'season' => $episode->getSeason()->getNumber(),
                 'episodeSlug' => $episode->getSlug(),
             ], Response::HTTP_SEE_OTHER);
         }
