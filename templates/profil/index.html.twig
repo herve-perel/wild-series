@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProfilController!{% endblock %}
+
+{% block body %}
+	{% if app.user %}
+
+			
+
+<h1>{{ app.user.username }}</h1>
+<p>{{ app.user.email }}</p>
+<p>{{ app.user.bio }}</p>
+
+
+			
+
+
+		{% endif %}
+
+{% endblock %}
