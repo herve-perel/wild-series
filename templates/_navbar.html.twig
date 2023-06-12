@@ -16,25 +16,25 @@
 				<a class="nav-link text-dark" href="{{ path('actor_index')}}">Acteur</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link text-dark" href="#">Login</a>
-			</li>
-		</ul>
-		{% if app.user %}
+				<a class="nav-link text-dark" href="{{ path('app_login') }} ">Se connecter</a>
+								
+					
+		</a>
+	</li>
+</ul>
+{% if app.user %}
+	<a class="text-dark mx-2" href="{{ path('app_profil')}}">{{ app.user.username }} Compte</a>
 
-			{{ app.user.email }}
+	
 
-			<a href="{{ path('app_logout') }}">
-				Se déconnecter</a>
+	<a class="text-dark mx-2" href="{{ path('app_logout') }}">
+		Se déconnecter</a>
 
-		{% else %}
+	{% else %}
 
-			<a href="{{ path('app_login') }}">
-				Se connecter</a>
 
-		{% endif %}
-		<form class=" d-flex justify-content-between form-inline my-2 my-lg-0">
-			<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-			<button class="btn btn-outline-success my-2 my-sm-0 bg-dark text-secondary " type="submit">Search</button>
-		</form>
-	</div>
-</nav>
+{% endif %}
+<form class=" d-flex justify-content-between form-inline my-2 my-lg-0">
+	<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+	<button class="btn btn-outline-success my-2 my-sm-0 bg-dark text-secondary " type="submit">Search</button>
+</form></div></nav>
